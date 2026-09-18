@@ -1,6 +1,6 @@
 """Application factory for Facility Shift Scheduler."""
 
-from flask import Flask
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -19,5 +19,10 @@ def create_app(test_config=None):
     @app.get("/")
     def index():
         return {"message": "Facility Shift Scheduler is running."}
+
+    @app.get("/schedule")
+    def schedule():
+        """Render the first-pass weekly schedule interface."""
+        return render_template("schedule.html")
 
     return app

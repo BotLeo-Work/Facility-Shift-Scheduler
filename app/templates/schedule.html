@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weekly schedule · Marketlane</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css') }}">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="/schedule" aria-label="Marketlane schedule home">
+          <span class="brand-mark">m</span>
+          <span>marketlane</span>
+        </a>
+
+        <nav>
+          <a class="nav-link nav-link--active" href="/schedule" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>
+            Schedule
+          </a>
+          <a class="nav-link" href="#team">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c.6-3.1 2.5-5 5.5-5s4.9 1.9 5.5 5M16 11a3 3 0 1 0-1-5.8M17.5 15.4c1.7.7 2.7 2.2 3 4.6"/></svg>
+            Team
+          </a>
+          <a class="nav-link" href="#time-off">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l4 4v14H3V3h4Z"/><path d="M15 3v5h5M8 13h8M8 17h5"/></svg>
+            Time off
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a class="nav-link" href="#settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-2.3 2.3-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1.1 1.6v.2h-3.2v-.2A1.8 1.8 0 0 0 10.1 19a1.8 1.8 0 0 0-2 .4l-.1.1-2.3-2.3.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.6-1.1h-.2v-3.2h.2A1.8 1.8 0 0 0 6.2 9.7a1.8 1.8 0 0 0-.4-2l-.1-.1 2.3-2.3.1.1a1.8 1.8 0 0 0 2 .4 1.8 1.8 0 0 0 1.1-1.6v-.2h3.2v.2a1.8 1.8 0 0 0 1.1 1.6 1.8 1.8 0 0 0 2-.4l.1-.1 2.3 2.3-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.6 1.1h.2V14H21a1.8 1.8 0 0 0-1.6 1Z"/></svg>
+            Settings
+          </a>
+          <div class="manager-card">
+            <div class="avatar avatar--manager">MC</div>
+            <div><strong>Maria Chen</strong><span>Store manager</span></div>
+            <button class="more-button" aria-label="Manager options">•••</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="page-intro">
+            <p class="eyebrow">Downtown market <span></span> Weekly planning</p>
+            <h1>Schedule</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" aria-label="View notifications">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+              <span class="notification-dot"></span>
+            </button>
+            <button class="help-button">?</button>
+          </div>
+        </header>
+
+        <section class="schedule-controls" aria-label="Schedule controls">
+          <div class="week-control">
+            <button class="today-button">Today</button>
+            <div class="date-nav">
+              <button aria-label="Previous week">‹</button>
+              <button aria-label="Next week">›</button>
+            </div>
+            <h2>September 14–20, 2026</h2>
+          </div>
+          <div class="view-actions">
+            <div class="view-toggle" aria-label="Schedule view">
+              <button class="view-toggle__active">Week</button>
+              <button>Day</button>
+            </div>
+            <button class="add-shift-button"><span>+</span> Add shift</button>
+          </div>
+        </section>
+
+        <div class="workspace">
+          <section class="calendar-panel" aria-labelledby="calendar-title">
+            <div class="calendar-heading">
+              <div>
+                <p class="section-kicker">This week</p>
+                <h2 id="calendar-title">Store floor coverage</h2>
+              </div>
+              <button class="text-button">View open shifts <span>→</span></button>
+            </div>
+
+            <div class="calendar" role="grid" aria-label="Weekly employee schedule">
+              <div class="calendar-header time-header"></div>
+              <div class="calendar-header"><span>MON</span><strong>14</strong></div>
+              <div class="calendar-header"><span>TUE</span><strong>15</strong></div>
+              <div class="calendar-header"><span>WED</span><strong>16</strong></div>
+              <div class="calendar-header calendar-header--today"><span>THU</span><strong>17</strong></div>
+              <div class="calendar-header"><span>FRI</span><strong>18</strong></div>
+              <div class="calendar-header calendar-header--weekend"><span>SAT</span><strong>19</strong></div>
+              <div class="calendar-header calendar-header--weekend"><span>SUN</span><strong>20</strong></div>
+
+              <div class="time-column" aria-hidden="true">
+                <span>8 AM</span><span>10 AM</span><span>12 PM</span><span>2 PM</span><span>4 PM</span><span>6 PM</span><span>8 PM</span>
+              </div>
+
+              <div class="day-column">
+                <article class="shift shift--peach" style="--start: 0%; --duration: 49%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>8:00 – 4:00</span></div></article>
+                <article class="shift shift--blue" style="--start: 25%; --duration: 38%;"><span class="avatar avatar--small">TR</span><div><strong>Tessa Reed</strong><span>12:00 – 6:00</span></div></article>
+              </div>
+              <div class="day-column">
+                <article class="shift shift--mint" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>9:00 – 5:00</span></div></article>
+                <article class="shift shift--lavender" style="--start: 50%; --duration: 38%;"><span class="avatar avatar--small">LO</span><div><strong>Leo Ortiz</strong><span>4:00 – 10:00</span></div></article>
+              </div>
+              <div class="day-column">
+                <article class="shift shift--yellow" style="--start: 0%; --duration: 61%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>8:00 – 6:00</span></div></article>
+                <article class="shift shift--peach" style="--start: 42%; --duration: 38%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>3:00 – 9:00</span></div></article>
+              </div>
+              <div class="day-column day-column--today">
+                <span class="current-time" style="--time: 39%;"><i></i><em>1:12 PM</em></span>
+                <article class="shift shift--blue" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">TR</span><div><strong>Tessa Reed</strong><span>9:00 – 5:00</span></div></article>
+                <article class="shift shift--mint" style="--start: 50%; --duration: 38%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>4:00 – 10:00</span></div></article>
+              </div>
+              <div class="day-column">
+                <article class="shift shift--lavender" style="--start: 0%; --duration: 49%;"><span class="avatar avatar--small">LO</span><div><strong>Leo Ortiz</strong><span>8:00 – 4:00</span></div></article>
+                <article class="shift shift--yellow" style="--start: 42%; --duration: 49%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>3:00 – 11:00</span></div></article>
+              </div>
+              <div class="day-column day-column--weekend">
+                <article class="shift shift--mint" style="--start: 17%; --duration: 49%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>10:00 – 6:00</span></div></article>
+                <article class="shift shift--peach" style="--start: 33%; --duration: 38%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>1:00 – 7:00</span></div></article>
+              </div>
+              <div class="day-column day-column--weekend">
+                <article class="shift shift--yellow" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>9:00 – 5:00</span></div></article>
+              </div>
+            </div>
+          </section>
+
+          <aside class="right-rail" aria-label="Schedule summary">
+            <section class="summary-card">
+              <p class="section-kicker">Today, September 17</p>
+              <h2>On the floor</h2>
+              <div class="coverage-stat"><strong>4</strong><span>team members<br>scheduled today</span></div>
+              <div class="coverage-bar"><span></span></div>
+              <p class="coverage-caption"><i></i> Coverage looks good through 6 PM</p>
+            </section>
+
+            <section class="team-card" id="team">
+              <div class="card-heading"><h2>Team</h2><button class="text-button">Manage</button></div>
+              <ul class="team-list">
+                <li><span class="avatar avatar--blue">TR</span><span><strong>Tessa Reed</strong><small>Floor associate</small></span><time>9–5</time></li>
+                <li><span class="avatar avatar--mint">MC</span><span><strong>Maria Chen</strong><small>Store manager</small></span><time>4–10</time></li>
+                <li><span class="avatar avatar--yellow">SK</span><span><strong>Sam Kim</strong><small>Cashier</small></span><time>Off</time></li>
+              </ul>
+              <button class="full-width-button">View all team members <span>→</span></button>
+            </section>
+
+            <section class="notice-card">
+              <span class="notice-icon">!</span>
+              <div><strong>1 open shift</strong><p>Sunday · 12 PM – 6 PM</p></div>
+              <button aria-label="Open shift details">›</button>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
