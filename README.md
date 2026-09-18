@@ -56,4 +56,7 @@ Then visit `http://127.0.0.1:5000`.
 See [the architecture guide](docs/ARCHITECTURE.md) for component boundaries,
 data model, and a suggested division of work.
 
-### This is Connor' Edit
+### This is Connor's Edit
+
+For the team's branching, pull-request, and conflict-avoidance process, see
+[the GitHub workflow guide](docs/GITHUB_WORKFLOW.md).
