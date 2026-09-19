@@ -16,7 +16,10 @@ an invalid time range.
 - **HTML/CSS** — schedule and form screens
 - **pytest** — lightweight automated checks
 
-## Quick start
+## How to start the project
+
+From the project folder, create and activate a virtual environment, install
+the dependencies, then start Flask:
 
 ```bash
 python3 -m venv .venv
@@ -25,7 +28,8 @@ pip install -r requirements.txt
 flask --app app run --debug
 ```
 
-Then visit `http://127.0.0.1:5000`.
+Open the weekly schedule at [http://127.0.0.1:5000/schedule](http://127.0.0.1:5000/schedule).
+Use `Ctrl+C` in the terminal to stop the server.
 
 ## Project map
 
