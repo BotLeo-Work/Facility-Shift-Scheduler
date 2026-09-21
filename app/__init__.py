@@ -1,6 +1,6 @@
-"""Application factory and routes for Facility Shift Scheduler."""
+"""Application factory for Facility Shift Scheduler."""
 
-from datetime import date, datetime, timedelta
+import os
 
 from flask import Flask, abort, redirect, render_template, request, url_for
 
@@ -9,18 +9,21 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY="dev",
-        DATABASE="instance/shift_scheduler.sqlite",
+        # Keep the database inside the instance folder, addressed absolutely so
+        # it does not move around with the directory Flask is started from.
+        DATABASE=os.path.join(app.instance_path, "shift_scheduler.sqlite"),
     )
 
     if test_config:
         app.config.update(test_config)
 
+    os.makedirs(app.instance_path, exist_ok=True)
+
     from . import db
     db.init_app(app)
 
-    @app.before_request
-    def ensure_database():
-        db.init_db()
+    from . import shifts
+    app.register_blueprint(shifts.bp)
 
     @app.get("/")
     def index():
