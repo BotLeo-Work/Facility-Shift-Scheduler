@@ -33,6 +33,9 @@ def get_db():
         # SQLite ignores foreign keys unless asked, and we rely on the link
         # from a shift to its employee.
         g.db.execute("PRAGMA foreign_keys = ON")
+        # A fresh SQLite file receives its tables as soon as the application
+        # opens it, which keeps first-time setup and test databases simple.
+        g.db.executescript(SCHEMA)
     return g.db
 
 

@@ -11,7 +11,7 @@ def test_home_page_reports_running():
 
 def test_schedule_page_renders_weekly_planner():
     app = create_app({"TESTING": True, "DATABASE": ":memory:"})
-    response = app.test_client().get("/schedule")
+    response = app.test_client().get("/schedule?start=2026-09-14")
 
     assert response.status_code == 200
     assert b"September 14\xe2\x80\x9320, 2026" in response.data

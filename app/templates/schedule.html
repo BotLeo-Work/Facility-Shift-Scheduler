@@ -4,162 +4,158 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Weekly schedule · Marketlane</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css') }}">
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Primary navigation">
-        <a class="brand" href="/schedule" aria-label="Marketlane schedule home">
-          <span class="brand-mark">m</span>
-          <span>marketlane</span>
-        </a>
-
-        <nav>
-          <a class="nav-link nav-link--active" href="/schedule" aria-current="page">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>
-            Schedule
-          </a>
-          <a class="nav-link" href="{{ url_for('employees') }}">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c.6-3.1 2.5-5 5.5-5s4.9 1.9 5.5 5M16 11a3 3 0 1 0-1-5.8M17.5 15.4c1.7.7 2.7 2.2 3 4.6"/></svg>
-            Team
-          </a>
-          <a class="nav-link" href="#time-off">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l4 4v14H3V3h4Z"/><path d="M15 3v5h5M8 13h8M8 17h5"/></svg>
-            Time off
-          </a>
+    <main class="live-schedule-page">
+      <header class="live-topbar">
+        <div>
+          <p class="eyebrow">Downtown market · Weekly planning</p>
+          <h1>Schedule</h1>
+        </div>
+        <nav aria-label="Main navigation">
+          <a href="{{ url_for('schedule') }}">Schedule</a>
+          <a href="{{ url_for('employees') }}">Team</a>
         </nav>
+      </header>
 
-        <div class="sidebar-bottom">
-          <a class="nav-link" href="#settings">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-2.3 2.3-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1.1 1.6v.2h-3.2v-.2A1.8 1.8 0 0 0 10.1 19a1.8 1.8 0 0 0-2 .4l-.1.1-2.3-2.3.1-.1a1.8 1.8 0 0 0 .4-2 1.8 1.8 0 0 0-1.6-1.1h-.2v-3.2h.2A1.8 1.8 0 0 0 6.2 9.7a1.8 1.8 0 0 0-.4-2l-.1-.1 2.3-2.3.1.1a1.8 1.8 0 0 0 2 .4 1.8 1.8 0 0 0 1.1-1.6v-.2h3.2v.2a1.8 1.8 0 0 0 1.1 1.6 1.8 1.8 0 0 0 2-.4l.1-.1 2.3 2.3-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.6 1.1h.2V14H21a1.8 1.8 0 0 0-1.6 1Z"/></svg>
-            Settings
-          </a>
-          <div class="manager-card">
-            <div class="avatar avatar--manager">MC</div>
-            <div><strong>Maria Chen</strong><span>Store manager</span></div>
-            <button class="more-button" aria-label="Manager options">•••</button>
-          </div>
+      <section class="live-controls" aria-label="Schedule controls">
+        <div class="week-navigation">
+          <a class="secondary-button" href="{{ url_for('schedule', start=previous_week) }}">← Previous</a>
+          <a class="secondary-button" href="{{ url_for('schedule', start=this_week) }}">This week</a>
+          <a class="secondary-button" href="{{ url_for('schedule', start=next_week) }}">Next →</a>
+          <h2>{{ week_label }}</h2>
         </div>
-      </aside>
+        {% if employees %}
+          <button class="add-shift-button" type="button" data-open-create>+ Add shift</button>
+        {% else %}
+          <a class="add-shift-button" href="{{ url_for('new_employee') }}">+ Add an employee first</a>
+        {% endif %}
+      </section>
 
-      <main class="main-content">
-        <header class="topbar">
-          <div class="page-intro">
-            <p class="eyebrow">Downtown market <span></span> Weekly planning</p>
-            <h1>Schedule</h1>
+      <section class="schedule-panel" aria-labelledby="schedule-title">
+        <div class="calendar-heading">
+          <div>
+            <p class="section-kicker">Live data</p>
+            <h2 id="schedule-title">Store floor coverage</h2>
           </div>
-          <div class="topbar-actions">
-            <button class="icon-button" aria-label="View notifications">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
-              <span class="notification-dot"></span>
-            </button>
-            <button class="help-button">?</button>
-          </div>
-        </header>
-
-        <section class="schedule-controls" aria-label="Schedule controls">
-          <div class="week-control">
-            <button class="today-button">Today</button>
-            <div class="date-nav">
-              <button aria-label="Previous week">‹</button>
-              <button aria-label="Next week">›</button>
-            </div>
-            <h2>September 14–20, 2026</h2>
-          </div>
-          <div class="view-actions">
-            <div class="view-toggle" aria-label="Schedule view">
-              <button class="view-toggle__active">Week</button>
-              <button>Day</button>
-            </div>
-            <button class="add-shift-button"><span>+</span> Add shift</button>
-          </div>
-        </section>
-
-        <div class="workspace">
-          <section class="calendar-panel" aria-labelledby="calendar-title">
-            <div class="calendar-heading">
-              <div>
-                <p class="section-kicker">This week</p>
-                <h2 id="calendar-title">Store floor coverage</h2>
-              </div>
-              <button class="text-button">View open shifts <span>→</span></button>
-            </div>
-
-            <div class="calendar" role="grid" aria-label="Weekly employee schedule">
-              <div class="calendar-header time-header"></div>
-              <div class="calendar-header"><span>MON</span><strong>14</strong></div>
-              <div class="calendar-header"><span>TUE</span><strong>15</strong></div>
-              <div class="calendar-header"><span>WED</span><strong>16</strong></div>
-              <div class="calendar-header calendar-header--today"><span>THU</span><strong>17</strong></div>
-              <div class="calendar-header"><span>FRI</span><strong>18</strong></div>
-              <div class="calendar-header calendar-header--weekend"><span>SAT</span><strong>19</strong></div>
-              <div class="calendar-header calendar-header--weekend"><span>SUN</span><strong>20</strong></div>
-
-              <div class="time-column" aria-hidden="true">
-                <span>8 AM</span><span>10 AM</span><span>12 PM</span><span>2 PM</span><span>4 PM</span><span>6 PM</span><span>8 PM</span>
-              </div>
-
-              <div class="day-column">
-                <article class="shift shift--peach" style="--start: 0%; --duration: 49%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>8:00 – 4:00</span></div></article>
-                <article class="shift shift--blue" style="--start: 25%; --duration: 38%;"><span class="avatar avatar--small">TR</span><div><strong>Tessa Reed</strong><span>12:00 – 6:00</span></div></article>
-              </div>
-              <div class="day-column">
-                <article class="shift shift--mint" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>9:00 – 5:00</span></div></article>
-                <article class="shift shift--lavender" style="--start: 50%; --duration: 38%;"><span class="avatar avatar--small">LO</span><div><strong>Leo Ortiz</strong><span>4:00 – 10:00</span></div></article>
-              </div>
-              <div class="day-column">
-                <article class="shift shift--yellow" style="--start: 0%; --duration: 61%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>8:00 – 6:00</span></div></article>
-                <article class="shift shift--peach" style="--start: 42%; --duration: 38%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>3:00 – 9:00</span></div></article>
-              </div>
-              <div class="day-column day-column--today">
-                <span class="current-time" style="--time: 39%;"><i></i><em>1:12 PM</em></span>
-                <article class="shift shift--blue" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">TR</span><div><strong>Tessa Reed</strong><span>9:00 – 5:00</span></div></article>
-                <article class="shift shift--mint" style="--start: 50%; --duration: 38%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>4:00 – 10:00</span></div></article>
-              </div>
-              <div class="day-column">
-                <article class="shift shift--lavender" style="--start: 0%; --duration: 49%;"><span class="avatar avatar--small">LO</span><div><strong>Leo Ortiz</strong><span>8:00 – 4:00</span></div></article>
-                <article class="shift shift--yellow" style="--start: 42%; --duration: 49%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>3:00 – 11:00</span></div></article>
-              </div>
-              <div class="day-column day-column--weekend">
-                <article class="shift shift--mint" style="--start: 17%; --duration: 49%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>10:00 – 6:00</span></div></article>
-                <article class="shift shift--peach" style="--start: 33%; --duration: 38%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>1:00 – 7:00</span></div></article>
-              </div>
-              <div class="day-column day-column--weekend">
-                <article class="shift shift--yellow" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>9:00 – 5:00</span></div></article>
-              </div>
-            </div>
-          </section>
-
-          <aside class="right-rail" aria-label="Schedule summary">
-            <section class="summary-card">
-              <p class="section-kicker">Today, September 17</p>
-              <h2>On the floor</h2>
-              <div class="coverage-stat"><strong>4</strong><span>team members<br>scheduled today</span></div>
-              <div class="coverage-bar"><span></span></div>
-              <p class="coverage-caption"><i></i> Coverage looks good through 6 PM</p>
-            </section>
-
-            <section class="team-card" id="team">
-              <div class="card-heading"><h2>Team</h2><button class="text-button">Manage</button></div>
-              <ul class="team-list">
-                <li><span class="avatar avatar--blue">TR</span><span><strong>Tessa Reed</strong><small>Floor associate</small></span><time>9–5</time></li>
-                <li><span class="avatar avatar--mint">MC</span><span><strong>Maria Chen</strong><small>Store manager</small></span><time>4–10</time></li>
-                <li><span class="avatar avatar--yellow">SK</span><span><strong>Sam Kim</strong><small>Cashier</small></span><time>Off</time></li>
-              </ul>
-              <button class="full-width-button">View all team members <span>→</span></button>
-            </section>
-
-            <section class="notice-card">
-              <span class="notice-icon">!</span>
-              <div><strong>1 open shift</strong><p>Sunday · 12 PM – 6 PM</p></div>
-              <button aria-label="Open shift details">›</button>
-            </section>
-          </aside>
+          <a class="text-button" href="{{ url_for('employees') }}">Manage employees →</a>
         </div>
-      </main>
-    </div>
+
+        <div class="live-calendar" role="grid" aria-label="Weekly employee schedule from 8 AM to 8 PM">
+          <div class="time-header">Time</div>
+          {% for day in week_days %}
+            <div class="live-day-header">
+              <span>{{ day.date.strftime('%a') | upper }}</span>
+              <strong>{{ day.date.day }}</strong>
+            </div>
+          {% endfor %}
+
+          <div class="live-time-column" aria-hidden="true">
+            <span>8 AM</span><span>10 AM</span><span>12 PM</span><span>2 PM</span><span>4 PM</span><span>6 PM</span><span>8 PM</span>
+          </div>
+          {% for day in week_days %}
+            <div class="live-day-column">
+              {% for shift in day.shifts %}
+                <article class="live-shift" style="--start: {{ '%.2f' | format(shift.start_percent) }}%; --duration: {{ '%.2f' | format(shift.duration_percent) }}%;">
+                  <strong>{{ shift.employee_name }}</strong>
+                  <span>{{ shift.time_label }}</span>
+                  {% if shift.notes %}<small>{{ shift.notes }}</small>{% endif %}
+                  <button type="button" class="shift-edit-button" data-edit-shift='{{ shift | tojson }}' aria-label="Edit {{ shift.employee_name }}'s shift">Edit</button>
+                </article>
+              {% else %}
+                <p class="no-shifts">No shifts</p>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+
+    <dialog id="shift-dialog" class="shift-dialog" aria-labelledby="shift-dialog-title">
+      <form id="shift-form">
+        <div class="dialog-heading">
+          <h2 id="shift-dialog-title">Add shift</h2>
+          <button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+        </div>
+        <p id="shift-error" class="form-error" role="alert" hidden></p>
+        <label for="employee_id">Employee</label>
+        <select id="employee_id" name="employee_id" required>
+          {% for employee in employees %}
+            <option value="{{ employee.id }}">{{ employee.name }} — {{ employee.role }}</option>
+          {% endfor %}
+        </select>
+        <label for="start_at">Start</label>
+        <input id="start_at" name="start_at" type="datetime-local" required>
+        <label for="end_at">End</label>
+        <input id="end_at" name="end_at" type="datetime-local" required>
+        <label for="notes">Notes <span>(optional)</span></label>
+        <textarea id="notes" name="notes" maxlength="500" rows="3"></textarea>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close-dialog>Cancel</button>
+          <button class="delete-button" type="button" id="delete-shift" hidden>Delete shift</button>
+          <button class="add-shift-button" type="submit">Save shift</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      const dialog = document.querySelector('#shift-dialog');
+      const form = document.querySelector('#shift-form');
+      const title = document.querySelector('#shift-dialog-title');
+      const error = document.querySelector('#shift-error');
+      const deleteButton = document.querySelector('#delete-shift');
+      let editingId = null;
+
+      function showError(messages) {
+        error.textContent = Array.isArray(messages) ? messages.join(' ') : messages;
+        error.hidden = false;
+      }
+
+      function openCreate() {
+        editingId = null;
+        form.reset();
+        title.textContent = 'Add shift';
+        deleteButton.hidden = true;
+        error.hidden = true;
+        dialog.showModal();
+      }
+
+      function openEdit(shift) {
+        editingId = shift.id;
+        title.textContent = 'Edit shift';
+        form.employee_id.value = shift.employee_id;
+        form.start_at.value = shift.start_at;
+        form.end_at.value = shift.end_at;
+        form.notes.value = shift.notes || '';
+        deleteButton.hidden = false;
+        error.hidden = true;
+        dialog.showModal();
+      }
+
+      document.querySelector('[data-open-create]')?.addEventListener('click', openCreate);
+      document.querySelectorAll('[data-close-dialog]').forEach((button) => button.addEventListener('click', () => dialog.close()));
+      document.querySelectorAll('[data-edit-shift]').forEach((button) => button.addEventListener('click', () => openEdit(JSON.parse(button.dataset.editShift))));
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        data.employee_id = Number(data.employee_id);
+        const endpoint = editingId ? `/api/shifts/${editingId}` : '/api/shifts';
+        const method = editingId ? 'PATCH' : 'POST';
+        const response = await fetch(endpoint, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        const result = await response.json();
+        if (!response.ok) return showError(result.errors || 'Unable to save the shift.');
+        window.location.reload();
+      });
+
+      deleteButton.addEventListener('click', async () => {
+        if (!editingId || !window.confirm('Delete this shift?')) return;
+        const response = await fetch(`/api/shifts/${editingId}`, { method: 'DELETE' });
+        const result = await response.json();
+        if (!response.ok) return showError(result.errors || 'Unable to delete the shift.');
+        window.location.reload();
+      });
+    </script>
   </body>
 </html>
