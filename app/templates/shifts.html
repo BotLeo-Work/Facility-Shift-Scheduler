@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ 'Open shifts' if open_only else 'Shifts' }} · Marketlane</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css') }}">
+  </head>
+  <body>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="page-intro">
+          <p class="eyebrow">Downtown market <span></span> Shift management</p>
+          <h1>{{ 'Open shifts' if open_only else 'Shifts' }}</h1>
+        </div>
+        <a class="add-shift-button" href="{{ url_for('pages.new_shift') }}"><span>+</span> Add shift</a>
+      </header>
+
+      <section class="team-card" aria-labelledby="shift-list-title">
+        <div class="card-heading">
+          <h2 id="shift-list-title">{{ 'Open shifts' if open_only else 'Scheduled shifts' }}</h2>
+          <a class="text-button" href="{{ url_for('pages.schedule') }}">View schedule</a>
+        </div>
+        {% if shifts %}
+          <ul class="team-list">
+            {% for shift in shifts %}
+              <li>
+                <span class="avatar avatar--blue">{{ shift.employee_name[:1] | upper }}</span>
+                <span><strong>{{ shift.employee_name }}</strong><small>{{ shift.employee_role }}</small></span>
+                <time>{{ shift.start_at }} - {{ shift.end_at }}</time>
+                <a class="text-button" href="{{ url_for('pages.edit_shift', shift_id=shift.id) }}">Edit</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>{{ 'There are no open shifts.' if open_only else 'No shifts have been scheduled yet.' }}</p>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>

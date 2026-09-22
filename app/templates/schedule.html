@@ -22,7 +22,7 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>
             Schedule
           </a>
-          <a class="nav-link" href="{{ url_for('employees') }}">
+          <a class="nav-link" href="{{ url_for('pages.employees') }}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c.6-3.1 2.5-5 5.5-5s4.9 1.9 5.5 5M16 11a3 3 0 1 0-1-5.8M17.5 15.4c1.7.7 2.7 2.2 3 4.6"/></svg>
             Team
           </a>
@@ -62,19 +62,19 @@
 
         <section class="schedule-controls" aria-label="Schedule controls">
           <div class="week-control">
-            <button class="today-button">Today</button>
+            <a class="today-button" href="{{ url_for('pages.schedule') }}">Today</a>
             <div class="date-nav">
-              <button aria-label="Previous week">‹</button>
-              <button aria-label="Next week">›</button>
+              <a href="{{ url_for('pages.schedule', start=previous_week.isoformat()) }}" aria-label="Previous week">‹</a>
+              <a href="{{ url_for('pages.schedule', start=next_week.isoformat()) }}" aria-label="Next week">›</a>
             </div>
-            <h2>September 14–20, 2026</h2>
+            <h2>{{ week_label }}</h2>
           </div>
           <div class="view-actions">
             <div class="view-toggle" aria-label="Schedule view">
               <button class="view-toggle__active">Week</button>
               <button>Day</button>
             </div>
-            <button class="add-shift-button"><span>+</span> Add shift</button>
+            <a class="add-shift-button" href="{{ url_for('pages.new_shift') }}"><span>+</span> Add shift</a>
           </div>
         </section>
 
@@ -85,77 +85,42 @@
                 <p class="section-kicker">This week</p>
                 <h2 id="calendar-title">Store floor coverage</h2>
               </div>
-              <button class="text-button">View open shifts <span>→</span></button>
+              <a class="text-button" href="{{ url_for('pages.open_shifts') }}">View open shifts <span>→</span></a>
             </div>
 
             <div class="calendar" role="grid" aria-label="Weekly employee schedule">
               <div class="calendar-header time-header"></div>
-              <div class="calendar-header"><span>MON</span><strong>14</strong></div>
-              <div class="calendar-header"><span>TUE</span><strong>15</strong></div>
-              <div class="calendar-header"><span>WED</span><strong>16</strong></div>
-              <div class="calendar-header calendar-header--today"><span>THU</span><strong>17</strong></div>
-              <div class="calendar-header"><span>FRI</span><strong>18</strong></div>
-              <div class="calendar-header calendar-header--weekend"><span>SAT</span><strong>19</strong></div>
-              <div class="calendar-header calendar-header--weekend"><span>SUN</span><strong>20</strong></div>
+              {% for day in days %}<div class="calendar-header{% if day.date == today %} calendar-header--today{% elif day.date.weekday() >= 5 %} calendar-header--weekend{% endif %}"><span>{{ day.label }}</span><strong>{{ day.date.day }}</strong></div>{% endfor %}
 
               <div class="time-column" aria-hidden="true">
                 <span>8 AM</span><span>10 AM</span><span>12 PM</span><span>2 PM</span><span>4 PM</span><span>6 PM</span><span>8 PM</span>
               </div>
 
-              <div class="day-column">
-                <article class="shift shift--peach" style="--start: 0%; --duration: 49%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>8:00 – 4:00</span></div></article>
-                <article class="shift shift--blue" style="--start: 25%; --duration: 38%;"><span class="avatar avatar--small">TR</span><div><strong>Tessa Reed</strong><span>12:00 – 6:00</span></div></article>
-              </div>
-              <div class="day-column">
-                <article class="shift shift--mint" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>9:00 – 5:00</span></div></article>
-                <article class="shift shift--lavender" style="--start: 50%; --duration: 38%;"><span class="avatar avatar--small">LO</span><div><strong>Leo Ortiz</strong><span>4:00 – 10:00</span></div></article>
-              </div>
-              <div class="day-column">
-                <article class="shift shift--yellow" style="--start: 0%; --duration: 61%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>8:00 – 6:00</span></div></article>
-                <article class="shift shift--peach" style="--start: 42%; --duration: 38%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>3:00 – 9:00</span></div></article>
-              </div>
-              <div class="day-column day-column--today">
-                <span class="current-time" style="--time: 39%;"><i></i><em>1:12 PM</em></span>
-                <article class="shift shift--blue" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">TR</span><div><strong>Tessa Reed</strong><span>9:00 – 5:00</span></div></article>
-                <article class="shift shift--mint" style="--start: 50%; --duration: 38%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>4:00 – 10:00</span></div></article>
-              </div>
-              <div class="day-column">
-                <article class="shift shift--lavender" style="--start: 0%; --duration: 49%;"><span class="avatar avatar--small">LO</span><div><strong>Leo Ortiz</strong><span>8:00 – 4:00</span></div></article>
-                <article class="shift shift--yellow" style="--start: 42%; --duration: 49%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>3:00 – 11:00</span></div></article>
-              </div>
-              <div class="day-column day-column--weekend">
-                <article class="shift shift--mint" style="--start: 17%; --duration: 49%;"><span class="avatar avatar--small">MC</span><div><strong>Maria Chen</strong><span>10:00 – 6:00</span></div></article>
-                <article class="shift shift--peach" style="--start: 33%; --duration: 38%;"><span class="avatar avatar--small">AJ</span><div><strong>Alex Johnson</strong><span>1:00 – 7:00</span></div></article>
-              </div>
-              <div class="day-column day-column--weekend">
-                <article class="shift shift--yellow" style="--start: 8%; --duration: 49%;"><span class="avatar avatar--small">SK</span><div><strong>Sam Kim</strong><span>9:00 – 5:00</span></div></article>
-              </div>
+              {% for day in days %}<div class="day-column{% if day.date == today %} day-column--today{% elif day.date.weekday() >= 5 %} day-column--weekend{% endif %}">{% for shift in day.shifts %}<a class="shift shift--{{ shift.color }}" href="{{ url_for('pages.edit_shift', shift_id=shift.id) }}" style="--start: {{ shift.start }}%; --duration: {{ shift.duration }}%;"><span class="avatar avatar--small">{{ shift.initials }}</span><div><strong>{{ shift.name }}</strong><span>{{ shift.time }}</span></div></a>{% else %}<span class="empty-day">No shifts</span>{% endfor %}</div>{% endfor %}
             </div>
           </section>
 
           <aside class="right-rail" aria-label="Schedule summary">
             <section class="summary-card">
-              <p class="section-kicker">Today, September 17</p>
+              <p class="section-kicker">Today, {{ today_label }}</p>
               <h2>On the floor</h2>
-              <div class="coverage-stat"><strong>4</strong><span>team members<br>scheduled today</span></div>
+              <div class="coverage-stat"><strong>{{ today_shifts | map(attribute='name') | unique | list | length }}</strong><span>team members<br>scheduled today</span></div>
               <div class="coverage-bar"><span></span></div>
-              <p class="coverage-caption"><i></i> Coverage looks good through 6 PM</p>
+              <p class="coverage-caption"><i></i>{% if today_shifts %} Coverage looks good today{% else %} No shifts scheduled today{% endif %}</p>
             </section>
 
             <section class="team-card" id="team">
-              <div class="card-heading"><h2>Team</h2><button class="text-button">Manage</button></div>
+              <div class="card-heading"><h2>Team</h2><a class="text-button" href="{{ url_for('pages.employees') }}">Manage</a></div>
               <ul class="team-list">
-                <li><span class="avatar avatar--blue">TR</span><span><strong>Tessa Reed</strong><small>Floor associate</small></span><time>9–5</time></li>
-                <li><span class="avatar avatar--mint">MC</span><span><strong>Maria Chen</strong><small>Store manager</small></span><time>4–10</time></li>
-                <li><span class="avatar avatar--yellow">SK</span><span><strong>Sam Kim</strong><small>Cashier</small></span><time>Off</time></li>
+                {% for shift in today_shifts | unique(attribute='name') %}<li><span class="avatar avatar--blue">{{ shift.initials }}</span><span><strong>{{ shift.name }}</strong><small>Scheduled today</small></span><time>{{ shift.time }}</time></li>{% else %}<li>No team members scheduled.</li>{% endfor %}
               </ul>
-              <button class="full-width-button">View all team members <span>→</span></button>
+              <a class="full-width-button" href="{{ url_for('pages.employees') }}">View all team members <span>→</span></a>
             </section>
 
             <section class="notice-card">
               <span class="notice-icon">!</span>
               <div><strong>1 open shift</strong><p>Sunday · 12 PM – 6 PM</p></div>
-              <button aria-label="Open shift details">›</button>
+              <a href="{{ url_for('pages.open_shifts') }}" aria-label="Open shift details">›</a>
             </section>
           </aside>
         </div>

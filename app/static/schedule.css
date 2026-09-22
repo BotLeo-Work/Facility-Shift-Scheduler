@@ -29,6 +29,12 @@ button { cursor: pointer; }
 .manager-card strong { display: block; color: #fff; font-weight: 600; }.manager-card span { display: block; color: #9dabb6; margin-top: 2px; }.more-button { background: none; border: 0; color: #b2bdc6; letter-spacing: 1px; padding: 2px; }
 
 .main-content { min-width: 0; padding: 32px 48px 48px; background: #fbfcfb; }
+.form-panel { width: min(100%, 560px); margin: 48px auto 0; padding: 28px; }
+.form-panel form { display: grid; gap: 14px; margin-top: 20px; }
+.form-panel p { margin-bottom: 0; }
+.form-panel label { display: block; color: #45525d; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+.form-panel input:not([type="checkbox"]), .form-panel select, .form-panel textarea { width: 100%; border: 1px solid #dce2e5; border-radius: 6px; padding: 10px 11px; color: var(--ink); background: #fff; font: inherit; }
+.form-panel textarea { resize: vertical; }
 .topbar, .schedule-controls, .calendar-heading, .card-heading, .week-control, .view-actions { display: flex; align-items: center; }
 .topbar { justify-content: space-between; }.eyebrow, .section-kicker { text-transform: uppercase; letter-spacing: 1.1px; color: var(--muted); font-size: 10px; font-weight: 700; margin: 0 0 7px; }.eyebrow span { display: inline-block; height: 3px; width: 3px; margin: 0 7px 2px; border-radius: 50%; background: #9aa4ac; }
 h1, h2, p { margin-top: 0; } h1 { font-family: "Fraunces", Georgia, serif; font-size: 35px; line-height: 1; font-weight: 600; letter-spacing: -1.4px; margin-bottom: 0; } h2 { font-size: 17px; letter-spacing: -.35px; margin-bottom: 0; }

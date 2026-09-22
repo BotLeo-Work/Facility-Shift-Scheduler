@@ -15,7 +15,7 @@
         </div>
       </header>
 
-      <section class="team-card" aria-labelledby="employee-form-title">
+      <section class="team-card form-panel" aria-labelledby="employee-form-title">
         <h2 id="employee-form-title">Employee details</h2>
         {% if error %}<p role="alert">{{ error }}</p>{% endif %}
         <form method="post">
@@ -34,11 +34,11 @@
           {% endif %}
           <p>
             <button class="add-shift-button" type="submit">{{ 'Save changes' if employee else 'Add employee' }}</button>
-            <a class="text-button" href="{{ url_for('employees') }}">Cancel</a>
+            <a class="text-button" href="{{ url_for('pages.employees') }}">Cancel</a>
           </p>
         </form>
         {% if employee and employee.active %}
-          <form method="post" action="{{ url_for('deactivate_employee', employee_id=employee.id) }}">
+          <form method="post" action="{{ url_for('pages.deactivate_employee', employee_id=employee.id) }}">
             <button class="text-button" type="submit">Deactivate employee</button>
           </form>
         {% endif %}

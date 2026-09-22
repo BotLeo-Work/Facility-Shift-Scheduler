@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ 'Edit shift' if shift else 'Add shift' }} · Marketlane</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css') }}">
+  </head>
+  <body>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="page-intro">
+          <p class="eyebrow">Downtown market <span></span> Shift management</p>
+          <h1>{{ 'Edit shift' if shift else 'Add shift' }}</h1>
+        </div>
+      </header>
+
+      <section class="team-card form-panel" aria-labelledby="shift-form-title">
+        <h2 id="shift-form-title">Shift details</h2>
+        {% if error %}<p role="alert">{{ error }}</p>{% endif %}
+        <form method="post">
+          <p>
+            <label for="employee_id">Employee</label>
+            <select id="employee_id" name="employee_id" required>
+              <option value="">Select an employee</option>
+              {% for employee in employees %}<option value="{{ employee.id }}"{% if values.get('employee_id')|string == employee.id|string %} selected{% endif %}>{{ employee.name }} · {{ employee.role }}</option>{% endfor %}
+            </select>
+          </p>
+          <p>
+            <label for="start_at">Start</label>
+            <input id="start_at" name="start_at" type="datetime-local" required value="{{ values.get('start_at', '') }}">
+          </p>
+          <p>
+            <label for="end_at">End</label>
+            <input id="end_at" name="end_at" type="datetime-local" required value="{{ values.get('end_at', '') }}">
+          </p>
+          <p>
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="3">{{ values.get('notes', '') }}</textarea>
+          </p>
+          <p>
+            <button class="add-shift-button" type="submit">{{ 'Save changes' if shift else 'Add shift' }}</button>
+            <a class="text-button" href="{{ url_for('pages.shifts') }}">Cancel</a>
+          </p>
+        </form>
+        {% if shift %}
+          <form method="post" action="{{ url_for('pages.delete_shift', shift_id=shift.id) }}">
+            <button class="text-button" type="submit">Delete shift</button>
+          </form>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>

@@ -13,13 +13,13 @@
           <p class="eyebrow">Downtown market <span></span> Team management</p>
           <h1>Team</h1>
         </div>
-        <a class="add-shift-button" href="{{ url_for('new_employee') }}"><span>+</span> Add employee</a>
+        <a class="add-shift-button" href="{{ url_for('pages.new_employee') }}"><span>+</span> Add employee</a>
       </header>
 
       <section class="team-card" aria-labelledby="team-title">
         <div class="card-heading">
           <h2 id="team-title">Employees</h2>
-          <a class="text-button" href="{{ url_for('schedule') }}">View schedule</a>
+          <a class="text-button" href="{{ url_for('pages.schedule') }}">View schedule</a>
         </div>
         {% if employees %}
           <ul class="team-list">
@@ -30,7 +30,7 @@
                   <strong>{{ employee.name }}</strong>
                   <small>{{ employee.role }}{% if not employee.active %} · Inactive{% endif %}</small>
                 </span>
-                <a class="text-button" href="{{ url_for('edit_employee', employee_id=employee.id) }}">Edit</a>
+                <a class="text-button" href="{{ url_for('pages.edit_employee', employee_id=employee.id) }}">Edit</a>
               </li>
             {% endfor %}
           </ul>
