@@ -24,16 +24,23 @@ def _payload():
     if data is not None:
         return data
     if request.form:
-        return request.form.to_dict()
+        payload = request.form.to_dict(flat=True)
+        if request.form.getlist("employee_ids"):
+            payload["employee_ids"] = request.form.getlist("employee_ids")
+        return payload
     return None
 
 
 def _as_json(shift):
     return {
         "id": shift["id"],
+        "name": shift["name"],
         "employee_id": shift["employee_id"],
+        "employee_ids": shift["employee_ids"],
         "employee_name": shift["employee_name"],
+        "employee_names": shift["employee_names"],
         "employee_role": shift["employee_role"],
+        "employee_roles": shift["employee_roles"],
         "start_at": shift["start_at"],
         "end_at": shift["end_at"],
         "notes": shift["notes"],
@@ -46,18 +53,22 @@ def _failed(messages, status=400):
 
 def _check_against_schedule(cleaned, exclude_id=None):
     """Run the rules that need the database. Returns ``(errors, status)``."""
-    employee = db.get_employee(cleaned["employee_id"])
-    employee_error = rules.check_employee(employee, cleaned["employee_id"])
-    if employee_error:
-        return [employee_error], 400
+    if not cleaned.get("employee_ids"):
+        return [], None
 
-    conflicts = rules.find_conflicts(
-        cleaned["start_at"],
-        cleaned["end_at"],
-        db.shifts_for_employee(cleaned["employee_id"], exclude_id=exclude_id),
-    )
-    if conflicts:
-        return [rules.describe_conflict(shift) for shift in conflicts], 409
+    for employee_id in cleaned["employee_ids"]:
+        employee = db.get_employee(employee_id)
+        employee_error = rules.check_employee(employee, employee_id)
+        if employee_error:
+            return [employee_error], 400
+
+        conflicts = rules.find_conflicts(
+            cleaned["start_at"],
+            cleaned["end_at"],
+            db.shifts_for_employee(employee_id, exclude_id=exclude_id),
+        )
+        if conflicts:
+            return [rules.describe_conflict(shift) for shift in conflicts], 409
 
     return [], None
 
@@ -112,7 +123,12 @@ def create_shift():
         return _failed(errors, status)
 
     shift_id = db.insert_shift(
-        cleaned["employee_id"], cleaned["start_at"], cleaned["end_at"], cleaned["notes"]
+        cleaned.get("employee_id"),
+        cleaned["start_at"],
+        cleaned["end_at"],
+        cleaned["notes"],
+        name=cleaned["name"],
+        employee_ids=cleaned["employee_ids"],
     )
     return jsonify({"shift": _as_json(db.get_shift(shift_id))}), 201
 
@@ -140,10 +156,12 @@ def edit_shift(shift_id):
 
     db.update_shift(
         shift_id,
-        cleaned["employee_id"],
+        cleaned.get("employee_id"),
         cleaned["start_at"],
         cleaned["end_at"],
         cleaned["notes"],
+        name=cleaned["name"],
+        employee_ids=cleaned["employee_ids"],
     )
     return jsonify({"shift": _as_json(db.get_shift(shift_id))})
 

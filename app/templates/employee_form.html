@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ 'Edit employee' if employee else 'Add employee' }} · Marketlane</title>
+    <title>{{ 'Assign employee' if assign_shift else ('Edit employee' if employee else 'Add employee') }} · Marketlane</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css') }}">
   </head>
   <body>
@@ -11,30 +11,42 @@
       <header class="topbar">
         <div class="page-intro">
           <p class="eyebrow">Downtown market <span></span> Team management</p>
-          <h1>{{ 'Edit employee' if employee else 'Add employee' }}</h1>
+          <h1>{{ 'Assign employee' if assign_shift else ('Edit employee' if employee else 'Add employee') }}</h1>
         </div>
       </header>
 
       <section class="team-card form-panel" aria-labelledby="employee-form-title">
-        <h2 id="employee-form-title">Employee details</h2>
+        <h2 id="employee-form-title">{{ 'Assign coverage' if assign_shift else 'Employee details' }}</h2>
         {% if error %}<p role="alert">{{ error }}</p>{% endif %}
         <form method="post">
-          <p>
-            <label for="name">Name</label>
-            <input id="name" name="name" required value="{{ employee.name if employee else '' }}">
-          </p>
-          <p>
-            <label for="role">Role</label>
-            <input id="role" name="role" required value="{{ employee.role if employee else '' }}">
-          </p>
+          {% if assign_shift %}
+            <p>Choose an active employee for <strong>{{ assign_shift.name or 'this open shift' }}</strong>.</p>
+            <p>
+              <label for="employee_ids">Employees</label>
+              <select id="employee_ids" name="employee_ids" multiple required>
+                {% for option in employees %}
+                  <option value="{{ option.id }}"{% if option.id|string in selected_employee_ids|map('string')|list %} selected{% endif %}>{{ option.name }} · {{ option.role }}</option>
+                {% endfor %}
+              </select>
+            </p>
+          {% else %}
+            <p>
+              <label for="name">Name</label>
+              <input id="name" name="name" required value="{{ employee.name if employee else '' }}">
+            </p>
+            <p>
+              <label for="role">Role</label>
+              <input id="role" name="role" required value="{{ employee.role if employee else '' }}">
+            </p>
+          {% endif %}
           {% if employee %}
             <p>
               <label><input type="checkbox" name="active"{% if employee.active %} checked{% endif %}> Active employee</label>
             </p>
           {% endif %}
           <p>
-            <button class="add-shift-button" type="submit">{{ 'Save changes' if employee else 'Add employee' }}</button>
-            <a class="text-button" href="{{ url_for('pages.employees') }}">Cancel</a>
+            <button class="add-shift-button" type="submit">{{ 'Assign employee' if assign_shift else ('Save changes' if employee else 'Add employee') }}</button>
+            <a class="text-button" href="{{ url_for('pages.open_shifts') if assign_shift else url_for('pages.employees') }}">Cancel</a>
           </p>
         </form>
         {% if employee and employee.active %}

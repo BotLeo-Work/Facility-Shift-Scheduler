@@ -20,10 +20,14 @@
         {% if error %}<p role="alert">{{ error }}</p>{% endif %}
         <form method="post">
           <p>
-            <label for="employee_id">Employee</label>
-            <select id="employee_id" name="employee_id" required>
-              <option value="">Select an employee</option>
-              {% for employee in employees %}<option value="{{ employee.id }}"{% if values.get('employee_id')|string == employee.id|string %} selected{% endif %}>{{ employee.name }} · {{ employee.role }}</option>{% endfor %}
+            <label for="name">Shift name</label>
+            <input id="name" name="name" type="text" value="{{ values.get('name', '') }}" placeholder="Opening shift" required>
+          </p>
+          <p>
+            <label for="employee_ids">Employees</label>
+            <select id="employee_ids" name="employee_ids" multiple>
+              <option value="">Open shift – assign later</option>
+              {% for employee in employees %}<option value="{{ employee.id }}"{% if employee.id|string in (values.get('employee_ids', [values.get('employee_id', '')])|map('string')|list) %} selected{% endif %}>{{ employee.name }} · {{ employee.role }}</option>{% endfor %}
             </select>
           </p>
           <p>

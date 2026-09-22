@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='data-view.css') }}">
   </head>
   <body>
     <div class="app-shell">
@@ -96,7 +97,7 @@
                 <span>8 AM</span><span>10 AM</span><span>12 PM</span><span>2 PM</span><span>4 PM</span><span>6 PM</span><span>8 PM</span>
               </div>
 
-              {% for day in days %}<div class="day-column{% if day.date == today %} day-column--today{% elif day.date.weekday() >= 5 %} day-column--weekend{% endif %}">{% for shift in day.shifts %}<a class="shift shift--{{ shift.color }}" href="{{ url_for('pages.edit_shift', shift_id=shift.id) }}" style="--start: {{ shift.start }}%; --duration: {{ shift.duration }}%;"><span class="avatar avatar--small">{{ shift.initials }}</span><div><strong>{{ shift.name }}</strong><span>{{ shift.time }}</span></div></a>{% else %}<span class="empty-day">No shifts</span>{% endfor %}</div>{% endfor %}
+              {% for day in days %}<div class="day-column{% if day.date == today %} day-column--today{% elif day.date.weekday() >= 5 %} day-column--weekend{% endif %}">{% for shift in day.shifts %}<a class="shift shift--{{ shift.color }}" href="{{ shift.href }}" style="--start: {{ shift.start }}%; --duration: {{ shift.duration }}%;"><span class="avatar avatar--small">{{ shift.initials }}</span><div><strong>{{ shift.name }}</strong><span>{{ shift.time }}</span></div></a>{% else %}<span class="empty-day">No shifts</span>{% endfor %}</div>{% endfor %}
             </div>
           </section>
 
@@ -104,7 +105,7 @@
             <section class="summary-card">
               <p class="section-kicker">Today, {{ today_label }}</p>
               <h2>On the floor</h2>
-              <div class="coverage-stat"><strong>{{ today_shifts | map(attribute='name') | unique | list | length }}</strong><span>team members<br>scheduled today</span></div>
+              <div class="coverage-stat"><strong>{{ today_shifts | selectattr('employee_name') | map(attribute='employee_name') | unique | list | length }}</strong><span>team members<br>scheduled today</span></div>
               <div class="coverage-bar"><span></span></div>
               <p class="coverage-caption"><i></i>{% if today_shifts %} Coverage looks good today{% else %} No shifts scheduled today{% endif %}</p>
             </section>
@@ -112,7 +113,7 @@
             <section class="team-card" id="team">
               <div class="card-heading"><h2>Team</h2><a class="text-button" href="{{ url_for('pages.employees') }}">Manage</a></div>
               <ul class="team-list">
-                {% for shift in today_shifts | unique(attribute='name') %}<li><span class="avatar avatar--blue">{{ shift.initials }}</span><span><strong>{{ shift.name }}</strong><small>Scheduled today</small></span><time>{{ shift.time }}</time></li>{% else %}<li>No team members scheduled.</li>{% endfor %}
+                {% for shift in today_shifts | selectattr('employee_name') | unique(attribute='employee_name') %}<li><span class="avatar avatar--blue">{{ shift.initials }}</span><span><strong>{{ shift.employee_name }}</strong><small>Scheduled today</small></span><time>{{ shift.time }}</time></li>{% else %}<li>No team members scheduled.</li>{% endfor %}
               </ul>
               <a class="full-width-button" href="{{ url_for('pages.employees') }}">View all team members <span>→</span></a>
             </section>

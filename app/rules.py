@@ -15,7 +15,7 @@ from datetime import datetime
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M"
 EXAMPLE_TIME = "2026-09-17T09:00"
-ALLOWED_FIELDS = ("employee_id", "start_at", "end_at", "notes")
+ALLOWED_FIELDS = ("name", "employee_id", "employee_ids", "start_at", "end_at", "notes")
 NOTES_MAX_LENGTH = 500
 
 
@@ -49,6 +49,24 @@ def _clean_employee_id(value):
         return None, "employee_id must be a positive id number."
 
     return employee_id, None
+
+
+def _clean_employee_ids(value):
+    if isinstance(value, (str, int)):
+        value = [value]
+    if not isinstance(value, (list, tuple)):
+        return None, "employee_ids must be a list of employee id numbers."
+
+    employee_ids = []
+    for item in value:
+        if item in (None, "", "null", "NULL"):
+            continue
+        employee_id, error = _clean_employee_id(item)
+        if error:
+            return None, error.replace("employee_id", "employee_ids")
+        if employee_id not in employee_ids:
+            employee_ids.append(employee_id)
+    return employee_ids, None
 
 
 def _clean_notes(value):
@@ -91,16 +109,45 @@ def clean_shift_fields(payload, current=None):
     current = dict(current) if current else {}
     cleaned = {}
 
-    if "employee_id" in payload:
-        employee_id, error = _clean_employee_id(payload["employee_id"])
+    if "name" in payload:
+        value = payload["name"]
+        if value is None or (isinstance(value, str) and not value.strip()):
+            cleaned["name"] = None
+        else:
+            cleaned["name"] = value.strip()
+    elif "name" in current:
+        cleaned["name"] = current["name"]
+    else:
+        cleaned["name"] = None
+
+    if "employee_ids" in payload:
+        employee_ids, error = _clean_employee_ids(payload["employee_ids"])
         if error:
             errors.append(error)
         else:
-            cleaned["employee_id"] = employee_id
+            cleaned["employee_ids"] = employee_ids
+            cleaned["employee_id"] = employee_ids[0] if employee_ids else None
+    elif "employee_id" in payload:
+        value = payload["employee_id"]
+        if value in (None, "", "null", "NULL"):
+            cleaned["employee_id"] = None
+            cleaned["employee_ids"] = []
+        else:
+            employee_id, error = _clean_employee_id(value)
+            if error:
+                errors.append(error)
+            else:
+                cleaned["employee_id"] = employee_id
+                cleaned["employee_ids"] = [employee_id]
+    elif "employee_ids" in current:
+        cleaned["employee_ids"] = current["employee_ids"]
+        cleaned["employee_id"] = cleaned["employee_ids"][0] if cleaned["employee_ids"] else None
     elif "employee_id" in current:
         cleaned["employee_id"] = current["employee_id"]
+        cleaned["employee_ids"] = [current["employee_id"]] if current["employee_id"] is not None else []
     else:
-        errors.append("employee_id is required: a shift must belong to an employee.")
+        cleaned["employee_id"] = None
+        cleaned["employee_ids"] = []
 
     for field in ("start_at", "end_at"):
         if field in payload:
@@ -137,6 +184,9 @@ def clean_shift_fields(payload, current=None):
 
 def check_employee(employee, employee_id):
     """Return an error message when a shift cannot be given to this employee."""
+    if employee_id is None:
+        return None
+
     if employee is None:
         return f"No employee with id {employee_id} exists."
 

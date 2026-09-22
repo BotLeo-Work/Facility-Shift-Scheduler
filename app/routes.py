@@ -41,18 +41,25 @@ def _schedule_context(week_start):
         total_minutes = (schedule_end - schedule_start).total_seconds() / 60
         start_minutes = max(0, (start_at - schedule_start).total_seconds() / 60)
         duration_minutes = max(30, (end_at - start_at).total_seconds() / 60)
+        employee_names = row["employee_names"]
+        employee_name = row["employee_name"] or ""
+        shift_name = (row["name"] or employee_name or "Open shift").strip() or "Open shift"
+        initials = "".join(part[0] for part in employee_name.split()[:2]).upper() if employee_name else "?"
 
         shifts_by_day[day_index].append(
             {
                 "id": row["id"],
-                "name": row["employee_name"],
-                "initials": "".join(part[0] for part in row["employee_name"].split()[:2]).upper(),
+                "name": shift_name,
+                "employee_name": employee_name,
+                    "employee_names": employee_names,
+                "initials": initials,
                 "time": f"{_format_time(start_at)} – {_format_time(end_at)}",
                 "start_at": row["start_at"],
                 "end_at": row["end_at"],
                 "start": min(100, start_minutes / total_minutes * 100),
                 "duration": min(100, duration_minutes / total_minutes * 100),
                 "color": ("peach", "blue", "mint", "lavender", "yellow")[day_index % 5],
+                "href": url_for("pages.edit_shift", shift_id=row["id"]) if employee_name else url_for("pages.assign_employee", shift_id=row["id"]),
             }
         )
 
@@ -82,9 +89,13 @@ def _schedule_context(week_start):
 
 def _shift_form_context(shift=None, error=None, form=None):
     values = dict(form or {})
+    if form is not None and hasattr(form, "getlist") and form.getlist("employee_ids"):
+        values["employee_ids"] = form.getlist("employee_ids")
     if shift is not None and not form:
         values = {
-            "employee_id": str(shift["employee_id"]),
+            "name": shift["name"] or "",
+            "employee_id": str(shift["employee_id"]) if shift["employee_id"] is not None else "",
+            "employee_ids": [str(employee_id) for employee_id in shift["employee_ids"]],
             "start_at": shift["start_at"],
             "end_at": shift["end_at"],
             "notes": shift["notes"] or "",
@@ -103,19 +114,21 @@ def _save_shift(form, shift=None):
     if errors or cleaned is None:
         return None, errors
 
-    employee = db.get_employee(cleaned["employee_id"])
-    employee_error = rules.check_employee(employee, cleaned["employee_id"])
-    if employee_error:
-        return None, [employee_error]
+    employee_ids = cleaned.get("employee_ids", [])
+    for employee_id in employee_ids:
+        employee = db.get_employee(employee_id)
+        employee_error = rules.check_employee(employee, employee_id)
+        if employee_error:
+            return None, [employee_error]
 
-    exclude_id = shift["id"] if shift is not None else None
-    conflicts = rules.find_conflicts(
-        cleaned["start_at"],
-        cleaned["end_at"],
-        db.shifts_for_employee(cleaned["employee_id"], exclude_id=exclude_id),
-    )
-    if conflicts:
-        return None, [rules.describe_conflict(conflict) for conflict in conflicts]
+        exclude_id = shift["id"] if shift is not None else None
+        conflicts = rules.find_conflicts(
+            cleaned["start_at"],
+            cleaned["end_at"],
+            db.shifts_for_employee(employee_id, exclude_id=exclude_id),
+        )
+        if conflicts:
+            return None, [rules.describe_conflict(conflict) for conflict in conflicts]
 
     if shift is None:
         shift_id = db.insert_shift(**cleaned)
@@ -178,6 +191,37 @@ def edit_employee(employee_id):
     return render_template("employee_form.html", employee=employee, error=error)
 
 
+@bp.route("/shifts/<int:shift_id>/assign", methods=("GET", "POST"))
+def assign_employee(shift_id):
+    shift = db.get_shift(shift_id)
+    if shift is None:
+        abort(404)
+
+    error = None
+    selected_employee_ids = []
+    if request.method == "POST":
+        selected_employee_ids = request.form.getlist("employee_ids")
+        if not selected_employee_ids:
+            legacy_employee_id = request.form.get("employee_id", "")
+            selected_employee_ids = [legacy_employee_id] if legacy_employee_id else []
+        if not selected_employee_ids:
+            error = "Choose an active employee to assign to this shift."
+        else:
+            _, errors = _save_shift(request.form, shift=shift)
+            if not errors:
+                return redirect(url_for("pages.shifts"))
+            error = " ".join(errors)
+
+    return render_template(
+        "employee_form.html",
+        employee=None,
+        assign_shift=shift,
+        employees=db.list_employees(),
+        selected_employee_ids=selected_employee_ids,
+        error=error,
+    )
+
+
 @bp.post("/employees/<int:employee_id>/deactivate")
 def deactivate_employee(employee_id):
     if db.get_employee(employee_id) is None:
@@ -197,7 +241,7 @@ def shifts():
 
 @bp.get("/shifts/open")
 def open_shifts():
-    return render_template("shifts.html", shifts=[], open_only=True)
+    return render_template("shifts.html", shifts=db.list_open_shifts(), open_only=True)
 
 
 @bp.route("/shifts/new", methods=("GET", "POST"))

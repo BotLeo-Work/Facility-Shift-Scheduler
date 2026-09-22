@@ -93,10 +93,19 @@ def test_unparseable_time_explains_the_format():
 def test_missing_fields_are_all_reported_together():
     _, errors = rules.clean_shift_fields({})
 
-    assert len(errors) == 3
-    assert any("employee_id" in error for error in errors)
+    assert len(errors) == 2
     assert any("start_at" in error for error in errors)
     assert any("end_at" in error for error in errors)
+
+
+def test_shift_without_employee_is_valid_when_time_fields_are_present():
+    cleaned, errors = rules.clean_shift_fields(
+        {"start_at": "2026-09-17T09:00", "end_at": "2026-09-17T17:00"}
+    )
+
+    assert errors == []
+    assert cleaned["employee_id"] is None
+    assert cleaned["name"] is None
 
 
 def test_overlapping_shift_is_found():
@@ -229,6 +238,35 @@ def test_create_accepts_a_posted_form(client):
     )
 
     assert response.status_code == 201
+
+
+def test_create_shift_accepts_multiple_employees(client):
+    response = client.post(
+        "/api/shifts",
+        json={
+            "employee_ids": [1, 2],
+            "start_at": "2026-09-19T09:00",
+            "end_at": "2026-09-19T17:00",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json["shift"]["employee_ids"] == [1, 2]
+    assert response.json["shift"]["employee_names"] == ["Alex Johnson", "Tessa Reed"]
+
+
+def test_create_shift_rejects_overlap_for_any_assigned_employee(client, shift):
+    response = client.post(
+        "/api/shifts",
+        json={
+            "employee_ids": [2, 1],
+            "start_at": "2026-09-17T16:00",
+            "end_at": "2026-09-17T20:00",
+        },
+    )
+
+    assert response.status_code == 409
+    assert "already has a shift" in response.json["errors"][0]
 
 
 # --- Listing shifts ------------------------------------------------------

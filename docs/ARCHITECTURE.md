@@ -37,7 +37,7 @@ flowchart LR
 
 ```mermaid
 erDiagram
-    EMPLOYEES ||--o{ SHIFTS : works
+    EMPLOYEES }o--o{ SHIFTS : assigned_to
     EMPLOYEES {
       integer id PK
       string name
@@ -46,18 +46,22 @@ erDiagram
     }
     SHIFTS {
       integer id PK
-      integer employee_id FK
       datetime start_at
       datetime end_at
       string notes
+    }
+    SHIFT_EMPLOYEES {
+      integer shift_id PK, FK
+      integer employee_id PK, FK
     }
 ```
 
 ### Rules for version 1
 
-- A shift must have one active employee.
+- A shift may have zero or more active employees.
+- `shift_employees` stores the assignments; an empty assignment list is an open shift.
 - `end_at` must be after `start_at`.
-- One employee cannot have two shifts that overlap.
+- One employee cannot have two shifts that overlap, even when both shifts have multiple assignees.
 - Dates and times should use an ISO format internally, for example
   `2026-09-17T09:00`.
 
