@@ -74,7 +74,7 @@ def create_app(test_config=None):
                         "notes": shift["notes"] or "",
                         "start_percent": (visible_start - day_start).total_seconds() / 43200 * 100,
                         "duration_percent": (visible_end - visible_start).total_seconds() / 43200 * 100,
-                        "time_label": f"{shift_start.strftime('%-I:%M')} – {shift_end.strftime('%-I:%M')}",
+                        "time_label": f"{shift_start.strftime('%I:%M')} – {shift_end.strftime('%I:%M')}",
                     }
                 )
 
