@@ -6,7 +6,7 @@ def test_home_page_reports_running():
     response = app.test_client().get("/")
 
     assert response.status_code == 200
-    assert response.json["message"] == "Facility Shift Scheduler is running."
+    assert response.get_json()["message"] == "Facility Shift Scheduler is running."
 
 
 def test_schedule_page_renders_weekly_planner():

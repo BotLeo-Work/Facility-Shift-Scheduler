@@ -46,6 +46,59 @@ def init_db():
     get_db().executescript(SCHEMA)
 
 
+# --- Employee queries -------------------------------------------------------
+def list_employees(include_inactive=False):
+    query = "SELECT id, name, role, active FROM employees"
+    parameters = ()
+    if not include_inactive:
+        query += " WHERE active = 1"
+    query += " ORDER BY name"
+    return get_db().execute(query, parameters).fetchall()
+
+
+def create_employee(name, role):
+    name = name.strip()
+    role = role.strip()
+    if not name or not role:
+        raise ValueError("Employee name and role are required.")
+
+    db = get_db()
+    cursor = db.execute(
+        "INSERT INTO employees (name, role) VALUES (?, ?)",
+        (name, role),
+    )
+    db.commit()
+    return get_employee(cursor.lastrowid)
+
+
+def update_employee(employee_id, name, role, active=True):
+    name = name.strip()
+    role = role.strip()
+    if not name or not role:
+        raise ValueError("Employee name and role are required.")
+
+    db = get_db()
+    db.execute(
+        "UPDATE employees SET name = ?, role = ?, active = ? WHERE id = ?",
+        (name, role, int(bool(active)), employee_id),
+    )
+    db.commit()
+    return get_employee(employee_id)
+
+
+def deactivate_employee(employee_id):
+    db = get_db()
+    db.execute("UPDATE employees SET active = 0 WHERE id = ?", (employee_id,))
+    db.commit()
+
+
+def get_employee(employee_id):
+    return get_db().execute(
+        "SELECT id, name, role, active FROM employees WHERE id = ?", (employee_id,)
+    ).fetchone()
+
+
+
 # --- Shift queries -------------------------------------------------------
 # Every shift is read through this one SELECT so that callers always get the
 # same columns, including the employee's name for display.
@@ -61,12 +114,6 @@ SELECT shifts.id,
 FROM shifts
 LEFT JOIN employees ON employees.id = shifts.employee_id
 """
-
-
-def get_employee(employee_id):
-    return get_db().execute(
-        "SELECT id, name, role, active FROM employees WHERE id = ?", (employee_id,)
-    ).fetchone()
 
 
 def get_shift(shift_id):
