@@ -93,6 +93,25 @@ existing shift, `404` for a shift that does not exist.
 See [the architecture guide](docs/ARCHITECTURE.md) for component boundaries,
 data model, and a suggested division of work.
 
+## AI-Assisted Development
+
+Our team used **Codex / ChatGPT and Claude Code as AI coding assistants** during development.
+It helped us create the initial Flask and SQLite project structure, draft the
+employee and shift-management routes, write validation and test ideas, explain
+GitHub workflow, and produce starter HTML/CSS for the schedule interface.
+
+AI-generated code still required human review and testing. For example, the
+first version of the schedule page looked complete but used hard-coded sample
+shifts instead of reading real shifts from SQLite. The team modified it so the
+weekly schedule now loads database data and its Add, Edit, and Delete controls
+call the Flask shift API.
+
+The team, rather than the AI, made the important scope decision to prioritize
+employee management, shift CRUD, weekly viewing, and overlap validation for
+version 1. We postponed features such as time-off requests, notifications,
+employee availability preferences, and automatic schedule generation so the
+core system could be completed and tested reliably.
+
 ### This is Connor's Edit
 
 For the team's branching, pull-request, and conflict-avoidance process, see
